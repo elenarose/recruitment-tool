@@ -1,0 +1,36 @@
+/* make the customizations */
+$theme-colors: (
+  "info": #A8E6CE,
+  "danger": #DCEDC2,
+  "primary": #FFAAA6
+);
+
+/* import bootstrap to set changes */
+@import "~bootstrap/scss/bootstrap";
+
+.recruiters {
+  margin-top: 50px;
+  margin-left: 50px;
+}
+
+.recruiters-table {
+  width: 50%;
+  background-color: #DCEDC2;
+}
+
+.input-file {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.input-file + label {
+  font-size: 1.25em;
+  color: white;
+  background-color: #FFAAA6;
+  display: inline-block;
+  border-radius: 1.4em;
+}
