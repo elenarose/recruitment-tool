@@ -1,80 +1,54 @@
-import React from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
+import React, {useEffect, useState} from 'react';
+import './App.scss';
+import Button from 'react-bootstrap/Button';
+import { BrowserRouter as Router } from "react-router-dom";
+import Navigation from "./components/Navigation";
+import Routes from "./components/Routes";
 
-import Home from './components/home'
+function App() {
+    const [loggedIn, setLoggedIn] = useState(false);
+    const [GoogleAuth, setGoogleAuth] = useState(false);
 
-// This site has 3 pages, all of which are rendered
-// dynamically in the browser (not server rendered).
-//
-// Although the page does not ever refresh, notice how
-// React Router keeps the URL up to date as you navigate
-// through the site. This preserves the browser history,
-// making sure things like the back button and bookmarks
-// work properly.
+    function login() {
+        GoogleAuth.signIn({
+            scope: 'profile email'
+        })
+        .then((response) => {
+            console.log('logged in', response);
+            setLoggedIn(true);
+        })
+    }
 
-export default function BasicExample() {
-  return (
-      <Router>
-        <div>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/about">About</Link>
-            </li>
-            <li>
-              <Link to="/dashboard">Dashboard</Link>
-            </li>
-          </ul>
+    const GoogleApiLoader = setInterval(() => {
+        if (window.gapi) {
+            window.gapi.load('auth2', async () => {
+                let auth2 = await window.gapi.auth2.init({client_id: ''});
+                setGoogleAuth(auth2);
+            })
+            clearInterval(GoogleApiLoader);
+        }
+    }, 100);
 
-          <hr />
+    useEffect(() => setLoggedIn(false), []);
 
-          {/*
-          A <Switch> looks through all its children <Route>
-          elements and renders the first one whose path
-          matches the current URL. Use a <Switch> any time
-          you have multiple routes, but you want only one
-          of them to render at a time
-        */}
-          <Switch>
-            <Route exact path="/">
-              <Home />
-            </Route>
-            <Route path="/about">
-              <About />
-            </Route>
-            <Route path="/dashboard">
-              <Dashboard />
-            </Route>
-          </Switch>
+    return (
+        <Router>
+        <div className="App">
+            {loggedIn ?
+                <header className="App-header">
+                    <Button disabled={!GoogleAuth} onClick={login} className="Login-button">
+                        Recruiters
+                    </Button>
+                </header>
+                :
+                (<>
+                <Navigation/>
+                <Routes/>
+                </>)
+            }
         </div>
-      </Router>
-  );
+        </Router>
+    );
 }
 
-// You can think of these components as "pages"
-// in your app.
-
-
-
-function About() {
-  return (
-      <div>
-        <h2>About</h2>
-      </div>
-  );
-}
-
-function Dashboard() {
-  return (
-      <div>
-        <h2>Dashboard</h2>
-      </div>
-  );
-}
+export default App;
